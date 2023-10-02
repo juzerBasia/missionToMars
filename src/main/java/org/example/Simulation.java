@@ -2,10 +2,10 @@ package org.example;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
-
 
 
 public class Simulation {
@@ -15,11 +15,14 @@ public class Simulation {
     String simulation = "Simulation run";
     final String ANSI_RESET = "\u001B[0m";
     final String ANSI_YELLOW = "\u001B[33m";
+    final String ANSI_PURPLE = "\u001B[35m";
+    String purpleStar = ANSI_PURPLE + "*" + ANSI_RESET;
+    String done = ANSI_PURPLE + ">>>" + ANSI_RESET;
 
     ArrayList<Item> loadItems(int phaseNo, String rocketType) throws FileNotFoundException {
-        System.out.println(ANSI_YELLOW+allStars+ANSI_RESET);
-        System.out.println(ANSI_YELLOW+"P H A S E  N O : " + phaseNo + " for " + rocketType+ANSI_RESET);
-        System.out.println(ANSI_YELLOW+allStars+ANSI_RESET);
+        System.out.println(ANSI_YELLOW + allStars + ANSI_RESET);
+        System.out.println(ANSI_YELLOW + "P H A S E  N O : " + phaseNo + " for " + rocketType + ANSI_RESET);
+        System.out.println(ANSI_YELLOW + allStars + ANSI_RESET);
         ArrayList<Item> items = new ArrayList<>();
         String phasePath = phaseNo == 1 ? "src/main/resources/phase-1.txt" : "src/main/resources/phase-2.txt";
 
@@ -34,69 +37,65 @@ public class Simulation {
     }
 
     ArrayList<Rocket> loadU1(ArrayList<Item> items) {
+        System.out.println(ANSI_PURPLE + loading.replace("X", "U1") + ANSI_RESET);
 
-        System.out.println(loading.replace("X", "U1"));
-        ArrayList<Rocket> u1Rockets = new ArrayList<>();
-        Iterator<Item> iterator = items.iterator();
         U1 u1 = new U1(Rocket.getCount());
-        System.out.println("\tU1_id=" + u1.getId() + " loading");
+        System.out.println(purpleStar+"\t"+u1.getClass().getSimpleName()+"_" + u1.getId() + " loading");
 
-        while (iterator.hasNext()) {
-            Item item = iterator.next();
-            if (u1.canCarry(item)) {
-                System.out.println("\t\t " + item.weight+" kg");
-                u1.carry(item);
-            } else {
-                u1Rockets.add(u1);
-                System.out.println("\t\tU1_id=" + u1.getId() + " loaded " + " total weight " + (u1.currentWeight + u1.getRocketWeightKg()));
-                u1 = new U1(Rocket.getCount());
-                System.out.println("\tU1_id=" + u1.getId() + " loading");
-            }
-        }
-        System.out.println("\t\tU1_id=" + u1.getId() + " loaded " + " total weight " + (u1.currentWeight + u1.getRocketWeightKg()));
-        u1Rockets.add(u1);
-        System.out.println(loading.replace("X", "U1") + " finished\n");
-        return u1Rockets;
+        return loadingRockets(u1, items);
     }
 
-    ArrayList<Rocket> loadU2(ArrayList<Item> items){
-        System.out.println(loading.replace("X", "U2"));
-
+    ArrayList<Rocket> loadU2(ArrayList<Item> items) {
+        System.out.println(ANSI_PURPLE + loading.replace("X", "U2") + ANSI_RESET);
         ArrayList<Rocket> u2Rockets = new ArrayList<>();
         Iterator<Item> iterator = items.iterator();
         U2 u2 = new U2(Rocket.getCount());
-        System.out.println("\tU2_id=" + u2.getId() + " loading");
+        System.out.println(purpleStar+"\tU2_id=" + u2.getId() + " loading");
 
+        return  loadingRockets(u2, items);
+    }
+
+    ArrayList<Rocket> loadingRockets(Rocket rocket, ArrayList<Item> items) {
+        Iterator<Item> iterator = items.iterator();
+        ArrayList<Rocket> rockets = new ArrayList<>();
         while (iterator.hasNext()) {
             Item item = iterator.next();
-            if (u2.canCarry(item)) {
-                System.out.println("\t\t " + item.weight);
-                u2.carry(item);
+            if (rocket.canCarry(item)) {
+                System.out.println(purpleStar+"\t\t " +item.name+": "+ item.weight + " kg");
+                rocket.carry(item);
             } else {
-                u2Rockets.add(u2);
-                System.out.println("\t\tU2_id=" + u2.getId() + " loaded " + " total weight " + (u2.currentWeight + u2.getRocketWeightKg()));
-                u2 = new U2(Rocket.getCount());
-                System.out.println("\tU2_id=" + u2.getId() + " loading");
+                rockets.add(rocket);
+                System.out.println(done+"\t\t"+rocket.getClass().getSimpleName()+"_" + rocket.getId() + " loaded " + " total weight " + (rocket.currentWeight + rocket.getRocketWeightKg()));
+                if (rocket instanceof U1) {
+                    rocket = new U1(Rocket.getCount());
+                } else {
+                    rocket = new U2(Rocket.getCount());
+                }
+                System.out.println(purpleStar+"\t"+rocket.getClass().getSimpleName()+"_" + rocket.getId() + " loading");
+                rocket.carry(item);
+                System.out.println(purpleStar+"\t\t " +item.name+": "+ item.weight + " kg");
             }
         }
-        System.out.println("\t\tU2_id=" + u2.getId() + " loaded " + " total weight " + (u2.currentWeight + u2.getRocketWeightKg()));
-        u2Rockets.add(u2);
-        System.out.println(loading.replace("X", "U2") + " finished\n");
-        return u2Rockets;
+        System.out.println(done+"\t\t"+rocket.getClass().getSimpleName()+"_" + rocket.getId() + " loaded " + " total weight " + (rocket.currentWeight + rocket.getRocketWeightKg()));
+        rockets.add(rocket);
+        System.out.println(ANSI_PURPLE + loading.replace("X", rocket.getClass().getSimpleName()) + " finished\n" + ANSI_RESET);
+
+        return rockets;
     }
 
     public int[] runSimulation(ArrayList<Rocket> rockets) {
-        System.out.println(simulation);
-        
+        System.out.println(ANSI_PURPLE + simulation + ANSI_RESET);
+        int totalWeight = 0;
         int counter = 0; //failed trials of launch/land
         int costOfRocket = rockets.get(0).getRocketCost$();
-        for (Rocket r : rockets) {
-            int rocketCrashes= launchRocket(r, 0);
+        for (Rocket rocket : rockets) {
+            int rocketCrashes = launchRocket(rocket, 0);
             counter += rocketCrashes;
+            totalWeight += rocket.currentWeight;
         }
-        System.out.println(simulation + " " + "finished\n");
-             int budget = costOfRocket * (rockets.size() + counter);
-        return new int[]{budget, (rockets.size() + counter), counter};
+        System.out.println(ANSI_PURPLE + simulation + " " + "finished\n" + ANSI_RESET);
+        int budget = costOfRocket * (rockets.size() + counter);
+        return new int[]{budget, (rockets.size() + counter), counter, totalWeight};
     }
 
     private int launchRocket(Rocket r, int counter) {
@@ -108,12 +107,12 @@ public class Simulation {
             return launchRocket(r, counter);
         } else if (r.land()) {
             System.out.print("...successfully launched...");
-            System.out.println("....successfully landed "+"\n\t\tcrash count for this rocket "+counter);
+            System.out.println("....successfully landed " + "\n\t\tcrash count for this rocket " + counter);
             return counter;
         }
         System.out.print("...successfully launched...");
         counter++;
         System.out.print("...rocked exploaded at landing replaced with new rocket. ");
-        return launchRocket(r,counter);
+        return launchRocket(r, counter);
     }
 }
