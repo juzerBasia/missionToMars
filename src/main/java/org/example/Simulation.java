@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Simulation {
     int repeatNo = 87;
-    public static Map<Rocket, Integer> crashedRockets = new HashMap();
+    public static Map<Rocket, Integer> crashedRockets = new HashMap<>();
     String loading = "Loading X Rockets";
     String allStars = "*".repeat(repeatNo);
     String simulation = "Simulation run";
