@@ -2,14 +2,12 @@ package org.example;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.sql.Array;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class Simulation {
     int repeatNo = 87;
+    public static Map<Rocket, Integer> crashedRockets = new HashMap();
     String loading = "Loading X Rockets";
     String allStars = "*".repeat(repeatNo);
     String simulation = "Simulation run";
@@ -18,6 +16,7 @@ public class Simulation {
     final String ANSI_PURPLE = "\u001B[35m";
     String purpleStar = ANSI_PURPLE + "*" + ANSI_RESET;
     String done = ANSI_PURPLE + ">>>" + ANSI_RESET;
+
 
     ArrayList<Item> loadItems(int phaseNo, String rocketType) throws FileNotFoundException {
         System.out.println(ANSI_YELLOW + allStars + ANSI_RESET);
@@ -47,8 +46,6 @@ public class Simulation {
 
     ArrayList<Rocket> loadU2(ArrayList<Item> items) {
         System.out.println(ANSI_PURPLE + loading.replace("X", "U2") + ANSI_RESET);
-        ArrayList<Rocket> u2Rockets = new ArrayList<>();
-        Iterator<Item> iterator = items.iterator();
         U2 u2 = new U2(Rocket.getCount());
         System.out.println(purpleStar+"\tU2_id=" + u2.getId() + " loading");
 
@@ -97,12 +94,14 @@ public class Simulation {
         int budget = costOfRocket * (rockets.size() + counter);
         return new int[]{budget, (rockets.size() + counter), counter, totalWeight};
     }
-
     private int launchRocket(Rocket r, int counter) {
 
         System.out.print("\t" + r.getClass().getSimpleName() + "_" + r.getId() + " launched " + (counter > 0 ? "again" : ""));
         if (!r.launch()) {
             counter++;
+
+            crashedRockets.put(r, crashedRockets.getOrDefault(r,0)+1);
+
             System.out.print(" ... rocked exploaded at launching ...replaced with new rocket ");
             return launchRocket(r, counter);
         } else if (r.land()) {
@@ -110,6 +109,9 @@ public class Simulation {
             System.out.println("....successfully landed " + "\n\t\tcrash count for this rocket " + counter);
             return counter;
         }
+
+        crashedRockets.put(r, crashedRockets.getOrDefault(r,0)+1);
+
         System.out.print("...successfully launched...");
         counter++;
         System.out.print("...rocked exploaded at landing replaced with new rocket. ");

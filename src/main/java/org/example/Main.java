@@ -3,6 +3,7 @@ package org.example;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         final String ANSI_RESET = "\u001B[0m";
@@ -45,5 +46,11 @@ public class Main {
                 "Phase 1 "+"U1: "+u1Phase1Results[3]+" U2:"+u2Phase1Results[3]+"\n"+
                 "Phase 2 "+"U1: "+u1Phase2Results[3]+" U2:"+u2Phase2Results[3]);
         System.out.println(ANSI_YELLOW+"-".repeat(87)+ANSI_RESET);
+
+        System.out.println(ANSI_YELLOW + "Details of crashed rockets:" + ANSI_RESET);
+
+        for (Rocket r:Simulation.crashedRockets.keySet() ) {
+            System.out.println(r.getClass().getSimpleName()+"_"+r.getId()+", cost: "+r.getRocketCost$()+", weight of equipment lost/totalweight: "+r.currentWeight+"/"+(r.getRocketWeightKg()+r.currentWeight)+", no of rockets: "+Simulation.crashedRockets.get(r) );
+        }
     }
 }
