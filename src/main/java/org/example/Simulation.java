@@ -34,16 +34,6 @@ public class Simulation {
 
     }
 
-    public void printPhaseInfo(int phaseNo, String rocketType) {
-        System.out.println(ANSI_YELLOW + allStars + ANSI_RESET);
-        System.out.println(ANSI_YELLOW + "P H A S E  N O : " + phaseNo + " for " + rocketType + ANSI_RESET);
-        System.out.println(ANSI_YELLOW + allStars + ANSI_RESET);
-    }
-
-    public void printLoadingInfo(String rocketType) {
-        System.out.println(ANSI_PURPLE + "loading " + rocketType + ANSI_RESET);
-    }
-
     public List<Rocket> load(List<Item> items, String rocketType) {
         printLoadingInfo(rocketType);
         if (Objects.equals(rocketType, "U1")) {
@@ -53,19 +43,6 @@ public class Simulation {
             U2 rocket = new U2(Rocket.getCount());
             return loadingRockets(rocket, items);
         }
-    }
-
-
-    public void loadingMessage(Rocket rocket) {
-        System.out.println(purpleStar + "\t" + getRocketDetail(rocket) + " loading");
-    }
-
-    public void loadingDoneMessage(Rocket rocket) {
-        System.out.println(done + "\t\t" + getRocketDetail(rocket) + " loaded, total weight " + (rocket.currentWeight + rocket.getRocketWeightKg()));
-    }
-
-    public void loadedItemMessage(Item item) {
-        System.out.println(purpleStar + "\t\t " + item.name + ": " + item.weight + " kg");
     }
 
     List<Rocket> loadingRockets(Rocket rocket, List<Item> items) {
@@ -117,26 +94,45 @@ public class Simulation {
     }
 
     private int launchRocket(Rocket r, int counter) {
-
         System.out.print("\t" + r.getClass().getSimpleName() + "_" + r.getId() + " launched " + (counter > 0 ? "again" : ""));
+
         if (!r.launch()) {
             counter++;
-
             crashedRockets.put(r, crashedRockets.getOrDefault(r, 0) + 1);
-
             System.out.print(" ... rocked exploaded at launching ...replaced with new rocket ");
             return launchRocket(r, counter);
+
         } else if (r.land()) {
-            System.out.print("...successfully launched...");
-            System.out.println("....successfully landed " + "\n\t\tcrash count for this rocket " + counter);
+            System.out.println("...successfully launched.......successfully landed " + "\n\t\tcrash count for this rocket " + counter);
             return counter;
         }
 
         crashedRockets.put(r, crashedRockets.getOrDefault(r, 0) + 1);
 
-        System.out.print("...successfully launched...");
+        System.out.print("...successfully launched......rocked exploaded at landing replaced with new rocket. ");
         counter++;
-        System.out.print("...rocked exploaded at landing replaced with new rocket. ");
         return launchRocket(r, counter);
+    }
+
+    public void loadingMessage(Rocket rocket) {
+        System.out.println(purpleStar + "\t" + getRocketDetail(rocket) + " loading");
+    }
+
+    public void printPhaseInfo(int phaseNo, String rocketType) {
+        System.out.println(ANSI_YELLOW + allStars + ANSI_RESET);
+        System.out.println(ANSI_YELLOW + "P H A S E  N O : " + phaseNo + " for " + rocketType + ANSI_RESET);
+        System.out.println(ANSI_YELLOW + allStars + ANSI_RESET);
+    }
+
+    public void printLoadingInfo(String rocketType) {
+        System.out.println(ANSI_PURPLE + "loading " + rocketType + ANSI_RESET);
+    }
+
+    public void loadingDoneMessage(Rocket rocket) {
+        System.out.println(done + "\t\t" + getRocketDetail(rocket) + " loaded, total weight " + (rocket.currentWeight + rocket.getRocketWeightKg()));
+    }
+
+    public void loadedItemMessage(Item item) {
+        System.out.println(purpleStar + "\t\t " + item.name + ": " + item.weight + " kg");
     }
 }

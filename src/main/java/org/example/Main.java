@@ -51,16 +51,21 @@ public class Main {
 
         int u1Garbage = 0;
         int u2Garbage = 0;
-        for (Rocket r:Simulation.crashedRockets.keySet() ) {
-            System.out.printf(list, r.getClass().getSimpleName() + "_" + r.getId(), r.getRocketCostUSD(), r.currentWeight, (r.getRocketWeightKg() + r.currentWeight), Simulation.crashedRockets.get(r));
-            if (r instanceof U1) {
-                u1Garbage+= (r.getRocketWeightKg() + r.currentWeight);
-            } else if (r instanceof U2) {
-                u2Garbage += (r.getRocketWeightKg() + r.currentWeight);
-            } else {
-                System.out.println(" what kind of rocket was crashed? ");
+
+        if (Simulation.crashedRockets.size() > 0) {
+            for (Rocket r : Simulation.crashedRockets.keySet()) {
+                System.out.printf(list, r.getClass().getSimpleName() + "_" + r.getId(), r.getRocketCostUSD(), r.currentWeight, (r.getRocketWeightKg() + r.currentWeight), Simulation.crashedRockets.get(r));
+                if (r instanceof U1) {
+                    u1Garbage += (r.getRocketWeightKg() + r.currentWeight);
+                } else if (r instanceof U2) {
+                    u2Garbage += (r.getRocketWeightKg() + r.currentWeight);
+                } else {
+                    System.out.println(" what kind of rocket was crashed? ");
+                }
             }
-         }
+        } else {
+            System.out.println("No rocket was crashed ");
+        }
         System.out.println("-".repeat(87));
 
         System.out.println(ANSI_YELLOW + "Total garbage " + ANSI_RESET);
