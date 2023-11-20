@@ -3,19 +3,19 @@ package org.example;
 
 public class Rocket implements Spaceship {
 
-    private final int rocketCost$;
+    private final int rocketCostUSD;
     private int rocketWeightKg;
     private final int maxWeightKg;
     private final double chanceLaunchExpl;
     private final double changeLandExpl;
     int currentWeight = rocketWeightKg;
 
-    public static int count =1;
+     static int count =1;
     private final int id;
 
-    public Rocket(int rocketCost$, int rocketWeightKg, int maxWeightKg, double chanceLaunchExpl, double changeLandExpl, int id) {
+    public Rocket(int rocketCostUSD, int rocketWeightKg, int maxWeightKg, double chanceLaunchExpl, double changeLandExpl, int id) {
 
-        this.rocketCost$ = rocketCost$;
+        this.rocketCostUSD = rocketCostUSD;
         this.rocketWeightKg = rocketWeightKg;
         this.maxWeightKg = maxWeightKg;
         this.chanceLaunchExpl = chanceLaunchExpl;
@@ -28,8 +28,8 @@ public class Rocket implements Spaceship {
         return count;
     }
 
-    public int getRocketCost$() {
-        return rocketCost$;
+    public int getRocketCostUSD() {
+        return rocketCostUSD;
     }
 
     public int getRocketWeightKg() {
@@ -75,6 +75,8 @@ public class Rocket implements Spaceship {
         this.currentWeight += item.weight;
 
     }
-
+    public double getPartOfCalc() {
+        return 1.00*this.getRocketWeightKg() / (this.getMaxWeightKg() - this.getRocketWeightKg());
+    }
 
 }

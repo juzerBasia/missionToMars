@@ -1,7 +1,7 @@
 package org.example;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
+import java.util.List;
 
 
 public class Main {
@@ -12,32 +12,32 @@ public class Main {
         Simulation simulation = new Simulation();
 
 
-        ArrayList<Item> u1Phase1 = simulation.loadItems(1, "U1");
-        ArrayList<Rocket> u1Rockets = simulation.loadU1(u1Phase1);
+        List<Item> u1Phase1 = simulation.loadItems(1, "U1");
+        List<Rocket> u1Rockets = simulation.load(u1Phase1, "U1");
         int[] u1Phase1Results = simulation.runSimulation(u1Rockets);
 
-        ArrayList<Item> u1Phase2 = simulation.loadItems(2, "U1");
-        ArrayList<Rocket> u1RocketsP2 = simulation.loadU1(u1Phase2);
+        List<Item> u1Phase2 = simulation.loadItems(2, "U1");
+        List<Rocket> u1RocketsP2 = simulation.load(u1Phase2,"U1");
         int[] u1Phase2Results = simulation.runSimulation(u1RocketsP2);
 
 
-        ArrayList<Item> u2Phase1 = simulation.loadItems(1, "U2");
-        ArrayList<Rocket> u2RocketsP1 = simulation.loadU2(u2Phase1);
+        List<Item> u2Phase1 = simulation.loadItems(1, "U2");
+        List<Rocket> u2RocketsP1 = simulation.load(u2Phase1,"U2");
         int[] u2Phase1Results = simulation.runSimulation(u2RocketsP1);
 
-        ArrayList<Item> u2Phase2 = simulation.loadItems(2, "U2");
-        ArrayList<Rocket> u2RocketsP2 = simulation.loadU2(u2Phase2);
+        List<Item> u2Phase2 = simulation.loadItems(2, "U2");
+        List<Rocket> u2RocketsP2 = simulation.load(u2Phase2,"U2");
         int[] u2Phase2Results = simulation.runSimulation(u2RocketsP2);
 
         System.out.println("\n\n");
         System.out.println(ANSI_YELLOW+"-".repeat(40) + "OVERVIEW" + "-".repeat(39)+ANSI_RESET);
-        System.out.printf("|Phase  | %37s |%37s |\n", "*********** Rocket U1 *************",  "********** Rocket U2 **********");
-        System.out.printf("|       |  %4s | %13s | %13s | %4s | %13s | %13s |\n", "Cost", "Tot launched", "incl crashed", "Cost", "Tot launched", "incl crashed");
+        System.out.printf("|Phase  | %37s |%37s |%n", "*********** Rocket U1 *************",  "********** Rocket U2 **********");
+        System.out.printf("|       |  %4s | %13s | %13s | %4s | %13s | %13s |%n", "Cost", "Tot launched", "incl crashed", "Cost", "Tot launched", "incl crashed");
         System.out.println("-".repeat(87));
-        System.out.printf("|Phase 1|  %4d | %13d | %13d | %4d | %13d | %13d |\n", u1Phase1Results[0], u1Phase1Results[1], u1Phase1Results[2], u2Phase1Results[0], u2Phase1Results[1], u2Phase1Results[2]);
-        System.out.printf("|Phase 2|  %4d | %13d | %13d | %4d | %13d | %13d |\n", u1Phase2Results[0], u1Phase2Results[1], u1Phase2Results[2], u2Phase2Results[0], u2Phase2Results[1], u2Phase2Results[2]);
+        System.out.printf("|Phase 1|  %4d | %13d | %13d | %4d | %13d | %13d |%n", u1Phase1Results[0], u1Phase1Results[1], u1Phase1Results[2], u2Phase1Results[0], u2Phase1Results[1], u2Phase1Results[2]);
+        System.out.printf("|Phase 2|  %4d | %13d | %13d | %4d | %13d | %13d |%n", u1Phase2Results[0], u1Phase2Results[1], u1Phase2Results[2], u2Phase2Results[0], u2Phase2Results[1], u2Phase2Results[2]);
         System.out.println("-".repeat(87));
-        System.out.printf("|Total  |  %4d | %13d | %13d | %4d | %13d | %13d |\n", u1Phase2Results[0]+u1Phase2Results[0], u1Phase1Results[1]+u1Phase2Results[1], u1Phase1Results[2]+u1Phase2Results[2],u2Phase1Results[0]+u2Phase2Results[0], u2Phase1Results[1]+ u2Phase2Results[1],u2Phase1Results[2]+ u2Phase2Results[2]);
+        System.out.printf("|Total  |  %4d | %13d | %13d | %4d | %13d | %13d |%n", u1Phase2Results[0]+u1Phase2Results[0], u1Phase1Results[1]+u1Phase2Results[1], u1Phase1Results[2]+u1Phase2Results[2],u2Phase1Results[0]+u2Phase2Results[0], u2Phase1Results[1]+ u2Phase2Results[1],u2Phase1Results[2]+ u2Phase2Results[2]);
         System.out.println(ANSI_YELLOW+"-".repeat(87)+ANSI_RESET);
 
         System.out.println(ANSI_YELLOW+"Total weight of equipment transported to the Moon:\n\n"+ANSI_RESET +
@@ -52,7 +52,7 @@ public class Main {
         int u1Garbage = 0;
         int u2Garbage = 0;
         for (Rocket r:Simulation.crashedRockets.keySet() ) {
-            System.out.printf(list, r.getClass().getSimpleName() + "_" + r.getId(), r.getRocketCost$(), r.currentWeight, (r.getRocketWeightKg() + r.currentWeight), Simulation.crashedRockets.get(r));
+            System.out.printf(list, r.getClass().getSimpleName() + "_" + r.getId(), r.getRocketCostUSD(), r.currentWeight, (r.getRocketWeightKg() + r.currentWeight), Simulation.crashedRockets.get(r));
             if (r instanceof U1) {
                 u1Garbage+= (r.getRocketWeightKg() + r.currentWeight);
             } else if (r instanceof U2) {
